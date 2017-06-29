@@ -1,0 +1,5 @@
+[run]
+include = pfc/*
+omit = *migrations*, *tests*
+plugins =
+    django_coverage_plugin
