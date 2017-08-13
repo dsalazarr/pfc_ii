@@ -16,6 +16,9 @@ urlpatterns = [
     url(r'^users/', include('pfc.users.urls', namespace='users')),
     url(r'^accounts/', include('allauth.urls')),
 
+    # OAuth2
+    url(r'oauth2/', include('oauth2_provider.urls', namespace='oauth2_provider')),
+
     # Your stuff: custom urls includes go here
 
 
