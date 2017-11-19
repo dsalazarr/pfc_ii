@@ -13,7 +13,7 @@ class Company(models.Model):
     """
     Client company that has access to the owner's products
     """
-    id = models.IntegerField(_('Company\'s database id'), primary_key=True)
+    id = models.AutoField(_('Company\'s database id'), primary_key=True)
     name = models.CharField(_('Name of Company'), blank=False, max_length=255)
     slug = models.CharField(_('Company slug'), blank=True, unique=True, max_length=255)
 
@@ -32,13 +32,14 @@ class User(AbstractUser):
 
     # First Name and Last Name do not cover name patterns
     # around the globe.
+    id = models.AutoField(_('User\'s database id'), primary_key=True)
     name = models.CharField(_('Name of User'), blank=True, max_length=255)
     email = models.EmailField(
         max_length=255,
         help_text='Account email',
     )
     password = models.CharField(
-        max_length=56,
+        max_length=256,
         help_text='Account\'s holder password',
     )
     company = models.ForeignKey(

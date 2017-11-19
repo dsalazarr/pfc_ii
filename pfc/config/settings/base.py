@@ -42,6 +42,8 @@ DJANGO_APPS = [
     # 'django.contrib.humanize',
 
     # Admin
+    'jet',
+    'jet.dashboard',
     'django.contrib.admin',
 ]
 THIRD_PARTY_APPS = [
@@ -56,6 +58,7 @@ THIRD_PARTY_APPS = [
 LOCAL_APPS = [
     # custom users app
     'pfc.users.apps.UsersConfig',
+    'pfc.issues.apps.IssuesConfig',
     # Your stuff: custom apps go here
 ]
 
@@ -267,7 +270,7 @@ LOGIN_URL = 'account_login'
 AUTOSLUG_SLUGIFY_FUNCTION = 'slugify.slugify'
 
 ########## CELERY
-INSTALLED_APPS += ['pfc.taskapp.celery.CeleryConfig']
+# INSTALLED_APPS += ['pfc.taskapp.celery.CeleryConfig']
 CELERY_BROKER_URL = env('CELERY_BROKER_URL', default='django://')
 if CELERY_BROKER_URL == 'django://':
     CELERY_RESULT_BACKEND = 'redis://'
@@ -281,3 +284,4 @@ ADMIN_URL = r'^admin/'
 
 # Your common stuff: Below this line define 3rd party library settings
 # ------------------------------------------------------------------------------
+JET_DEFAULT_THEME = 'light-blue'
