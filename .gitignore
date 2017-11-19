@@ -102,3 +102,7 @@ ENV/
 
 # vscode
 .vscode
+
+.idea
+*.sublime-project
+*.sublime-workspace
