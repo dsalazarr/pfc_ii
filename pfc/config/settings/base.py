@@ -59,6 +59,7 @@ LOCAL_APPS = [
     # custom users app
     'pfc.users.apps.UsersConfig',
     'pfc.issues.apps.IssuesConfig',
+    'pfc.applications.apps.ApplicationsConfig'
     # Your stuff: custom apps go here
 ]
 
@@ -285,3 +286,5 @@ ADMIN_URL = r'^admin/'
 # Your common stuff: Below this line define 3rd party library settings
 # ------------------------------------------------------------------------------
 JET_DEFAULT_THEME = 'light-blue'
+
+OAUTH2_PROVIDER_APPLICATION_MODEL = 'oauth2_provider.Application'
