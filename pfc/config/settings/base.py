@@ -59,7 +59,8 @@ LOCAL_APPS = [
     # custom users app
     'pfc.users.apps.UsersConfig',
     'pfc.issues.apps.IssuesConfig',
-    'pfc.applications.apps.ApplicationsConfig'
+    'pfc.applications.apps.ApplicationsConfig',
+    'pfc.messaging.apps.MessagingConfig',
     # Your stuff: custom apps go here
 ]
 
