@@ -25,3 +25,10 @@ class Issue(models.Model):
     author = models.ForeignKey(User, related_name='created_issues')
     assigned_to = models.ForeignKey(User, null=True, related_name='assigned_issues')
     closed_by = models.ForeignKey(User, null=True, related_name='closed_issues')
+
+
+class IssueComment(models.Model):
+    id = models.AutoField(_("Comment's primary key"), primary_key=True)
+    body = models.TextField(_("Comment's body"), blank=False)
+
+    issue_id = models.ForeignKey(Issue, related_name='comments')
