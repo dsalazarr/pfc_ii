@@ -106,3 +106,22 @@ class User(AbstractUser):
         return self.licenses.create(
             company_license=company_license,
         )
+
+
+class UserRule(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=255, blank=False)
+    operator = models.CharField(max_length=255, blank=False)
+    argument = models.CharField(max_length=255, blank=True)
+
+    users = models.ManyToManyField(User, related_name='rules')
+
+
+class CompanyRule(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=255, blank=False)
+    operator = models.CharField(max_length=255, blank=False)
+    argument = models.CharField(max_length=255, blank=True)
+
+    companies = models.ManyToManyField(Company, related_name='rules')
+
