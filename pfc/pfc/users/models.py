@@ -1,12 +1,24 @@
 """
 PFC main app models
 """
+from datetime import datetime, timedelta
 
 from django.contrib.auth.models import AbstractUser
+from django.core.exceptions import ObjectDoesNotExist
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.translation import ugettext_lazy as _
+
+
+class AccessDeniedApplication(APIException):
+    status_code = 403
+    default_detail = 'You or your company do not have access to this application'
+
+
+class MaxUsersReached(APIException):
+    status_code = 400
+    default_detail = 'You reached the maximum number of users for this license'
 
 
 class Company(models.Model):
@@ -22,6 +34,22 @@ class Company(models.Model):
 
     def get_absolute_url(self):
         return reverse('companies:detail', kwargs={'slug': self.slug})
+
+    def assign_license(self, license, application):
+        try:
+            company_license = self.licenses.get(active=1, application=application)
+        except ObjectDoesNotExist:
+            pass
+        else:
+            company_license.active = False
+            company_license.end_date = datetime.utcnow()
+            company_license.save()
+        return self.licenses.create(
+            license=license,
+            start_date=datetime.utcnow(),
+            end_date=datetime.utcnow() + timedelta(days=license.duration_days),
+            application=application,
+        )
 
 
 @python_2_unicode_compatible
@@ -55,3 +83,25 @@ class User(AbstractUser):
             'company': self.company.slug,
             'username': self.username
         })
+
+    def has_access_to_application(self, application):
+        try:
+            self.user.licenses.get(
+                company_license__active=1,
+                company_license__application=application,
+            )
+        except ObjectDoesNotExist:
+            return False
+        else:
+            return True
+
+    def give_access_to_application(self, application):
+        try:
+            company_license = self.company.licenses.get(active=1, application=application)
+        except ObjectDoesNotExist:
+            raise AccessDeniedApplication()
+        if company_license.users.count() >= company_license.license.max_users:
+            raise MaxUsersReached()
+        return self.licenses.create(
+            company_license=company_license,
+        )

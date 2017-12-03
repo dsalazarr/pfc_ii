@@ -2,8 +2,9 @@ from __future__ import unicode_literals
 
 from django.db import models
 from django.conf import settings
+from oauth2_provider.models import Application
 
-from pfc.users.models import Company
+from pfc.users.models import Company, User
 
 
 class ApplicationConfig(models.Model):
@@ -31,7 +32,7 @@ class License(models.Model):
 
 
 class CompanyApplicationLicense(models.Model):
-    company = models.ForeignKey(Company)
+    company = models.ForeignKey(Company, related_name='licenses')
     license = models.ForeignKey(License)
     application = models.ForeignKey(settings.OAUTH2_PROVIDER_APPLICATION_MODEL)
     active = models.BooleanField(default=True)
@@ -41,4 +42,14 @@ class CompanyApplicationLicense(models.Model):
     class Meta:
         unique_together = (
             ('company', 'application', 'active')
+        )
+
+
+class UserApplicationLicense(models.Model):
+    user = models.ForeignKey(User, 'licenses')
+    company_license = models.ForeignKey(CompanyApplicationLicense)
+
+    class Meta:
+        unique_together = (
+            ('user', 'company_license')
         )
