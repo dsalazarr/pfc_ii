@@ -46,7 +46,7 @@ class CompanyApplicationLicense(models.Model):
 
 
 class UserApplicationLicense(models.Model):
-    user = models.ForeignKey(User, 'licenses')
+    user = models.ForeignKey(User, related_name='licenses')
     company_license = models.ForeignKey(CompanyApplicationLicense)
 
     class Meta:
