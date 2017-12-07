@@ -105,9 +105,5 @@ class MyCompanyForm(admin.ModelAdmin):
         obj.slug = slugify(obj.name).lower()
         return super(MyCompanyForm, self).save_model(request, obj, form, change)
 
-    def formfield_for_choice_field(self, db_field, request, **kwargs):
-        import ipdb; ipdb.set_trace()
-        return super(MyCompanyForm, self).formfield_for_choice_field(db_field, request, **kwargs)
-
     def save_related(self, request, form, formsets, change):
         return super(MyCompanyForm, self).save_related(request, form, formsets, change)

@@ -1,4 +1,3 @@
-from datetime import datetime, timedelta
 
 from django import forms
 from django.contrib import admin
@@ -7,7 +6,6 @@ from django.contrib import admin
 from django.db.models.aggregates import Count
 from django.db.models.expressions import F
 from django.db.models.query_utils import Q
-from oauth2_provider.models import Application
 
 from pfc.applications.models import License, CompanyApplicationLicense, UserApplicationLicense
 
@@ -56,9 +54,6 @@ class UserApplicationLicenseForm(forms.ModelForm):
         queryset=CompanyApplicationLicense.objects.none(),
     )
 
-    def prueba(self):
-        return
-
     class Meta:
         model = UserApplicationLicense
         fields = tuple()
@@ -70,7 +65,7 @@ class UserApplicationLicenseForm(forms.ModelForm):
         return self.instance
 
 
-class UserApplicationInline(admin.StackedInline):
+class UserApplicationInline(admin.TabularInline):
     model = UserApplicationLicense
     extra = 1
     form = UserApplicationLicenseForm

@@ -40,6 +40,6 @@ class Issue(models.Model):
 
 class IssueComment(models.Model):
     id = models.AutoField(_("Comment's primary key"), primary_key=True)
-    body = models.TextField(_("Comment's body"), blank=False)
+    body = RichTextField(_("Comment's body"), blank=False)
 
     issue_id = models.ForeignKey(Issue, related_name='comments')
