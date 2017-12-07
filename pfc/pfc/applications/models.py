@@ -30,6 +30,9 @@ class License(models.Model):
     max_users = models.IntegerField("Maximum number of users")
     duration_days = models.IntegerField("Duration days of the license")
 
+    def __str__(self):
+        return self.name
+
 
 class CompanyApplicationLicense(models.Model):
     company = models.ForeignKey(Company, related_name='licenses')
@@ -39,10 +42,8 @@ class CompanyApplicationLicense(models.Model):
     start_date = models.DateTimeField()
     end_date = models.DateTimeField(null=True)
 
-    class Meta:
-        unique_together = (
-            ('company', 'application', 'active')
-        )
+    def __str__(self):
+        return "%s %s" % (self.application, self.license)
 
 
 class UserApplicationLicense(models.Model):
