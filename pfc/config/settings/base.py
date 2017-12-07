@@ -52,6 +52,7 @@ THIRD_PARTY_APPS = [
     'allauth.account',  # registration
     'allauth.socialaccount',  # registration
     'oauth2_provider',
+    'ckeditor',
 ]
 
 # Apps specific for this project go here.
@@ -289,3 +290,5 @@ ADMIN_URL = r'^admin/'
 JET_DEFAULT_THEME = 'light-blue'
 
 OAUTH2_PROVIDER_APPLICATION_MODEL = 'oauth2_provider.Application'
+
+APPEND_SLASH = False
