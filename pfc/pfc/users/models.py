@@ -101,7 +101,7 @@ class User(AbstractUser):
             company_license = self.company.licenses.get(active=1, application=application)
         except ObjectDoesNotExist:
             raise AccessDeniedApplication()
-        if company_license.users.count() >= company_license.license.max_users:
+        if company_license.userapplicationlicense_set.count() >= company_license.license.max_users:
             raise MaxUsersReached()
         return self.licenses.create(
             company_license=company_license,
@@ -109,12 +109,24 @@ class User(AbstractUser):
 
 
 class UserRule(models.Model):
+    OPERATOR_CHOICES = [
+        ('only_from_ip', 'Only from ip'),
+        ('only_after_hour', 'Only after hour'),
+        ('only_before_hour', 'Only before hour'),
+    ]
+
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255, blank=False)
     operator = models.CharField(max_length=255, blank=False)
     argument = models.CharField(max_length=255, blank=True)
 
     users = models.ManyToManyField(User, related_name='rules')
+
+    def apply_rule(self):
+        return self.__dict__[self.operator](self.argument)
+
+    def only_from_ip(self, ip):
+        return True
 
 
 class CompanyRule(models.Model):
