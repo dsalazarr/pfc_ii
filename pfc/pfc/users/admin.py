@@ -10,6 +10,11 @@ from pfc.users.models import UserRule, CompanyRule, Company
 from .models import User
 
 
+class UserRuleInline(admin.TabularInline):
+    model = User.rules.through
+    extra = 1
+
+
 class MyUserChangeForm(UserChangeForm):
     class Meta(UserChangeForm.Meta):
         model = User
@@ -42,7 +47,7 @@ class MyUserAdmin(AuthUserAdmin):
     ) + AuthUserAdmin.fieldsets
     list_display = ('username', 'name', 'is_superuser')
     search_fields = ['name']
-    inlines = [UserApplicationInline]
+    inlines = [UserApplicationInline, UserRuleInline]
 
 
 class UserRuleCreationForm(forms.ModelForm):
