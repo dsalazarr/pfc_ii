@@ -1,3 +1,20 @@
 from django.contrib import admin
 
-# Register your models here.
+from pfc.messaging.models import Message
+
+
+@admin.register(Message)
+class MyMessageForm(admin.ModelAdmin):
+    list_display = ('subject', 'author', 'destination')
+    fields = ('subject', 'body', 'destination')
+    search_fields = ('subject',)
+
+    def get_form(self, request, obj=None, **kwargs):
+        if obj and obj.id and obj.destination == request.user and not obj.read:
+            obj.read = True
+            obj.save(update_fields=['read'])
+        return super(MyMessageForm, self).get_form(request, obj, **kwargs)
+
+    def save_model(self, request, obj, form, change):
+        obj.author = request.user
+        return super(MyMessageForm, self).save_model(request, obj, form, change)
