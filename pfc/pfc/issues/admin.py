@@ -3,7 +3,7 @@ from django import forms
 from django.contrib import admin
 
 # Register your models here.
-from pfc.issues.models import Issue
+from pfc.issues.models import Issue, IssueComment
 
 
 logger = logging.getLogger('issue')
@@ -21,11 +21,18 @@ class IssueCreationForm(forms.ModelForm):
         )
 
 
+class CommentInline(admin.TabularInline):
+    model = IssueComment
+    fields = ('body',)
+    extra = 1
+
+
 @admin.register(Issue)
 class MyIssueForm(admin.ModelAdmin):
     change_form = IssueCreationForm
-    fields = ('title', 'ref', 'description')
+    fields = ('title', 'ref', 'description',)
     list_display = ('title', 'status', 'author', 'assigned_to', 'created_at')
+    inlines = [CommentInline]
 
     def save_model(self, request, obj, form, change):
         if not change:
