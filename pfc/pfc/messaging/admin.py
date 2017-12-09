@@ -18,3 +18,7 @@ class MyMessageForm(admin.ModelAdmin):
     def save_model(self, request, obj, form, change):
         obj.author = request.user
         return super(MyMessageForm, self).save_model(request, obj, form, change)
+
+
+class InboxAdmin(admin.ModelAdmin):
+    list_display = ('subject', 'author',)

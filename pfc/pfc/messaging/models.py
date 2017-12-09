@@ -18,3 +18,6 @@ class Message(models.Model):
 
     def __str__(self):
         return self.subject
+
+    def get_admin_url(self):
+        return "/admin/messaging/message/{}/change/".format(self.id)

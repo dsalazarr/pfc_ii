@@ -292,3 +292,5 @@ JET_DEFAULT_THEME = 'light-blue'
 OAUTH2_PROVIDER_APPLICATION_MODEL = 'oauth2_provider.Application'
 
 APPEND_SLASH = False
+
+JET_INDEX_DASHBOARD = 'pfc.dashboard.CustomDashboard'

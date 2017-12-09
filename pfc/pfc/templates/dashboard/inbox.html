@@ -1,0 +1,17 @@
+<ul>
+    {% for message in module.children %}
+        <li>
+            <span class="float-right">
+                <span class="dim">
+                    {{ message.author }}
+                </span>
+            </span>
+
+            <a href="{{ message.get_admin_url }}">{{ message.subject }}</a>
+        </li>
+    {% empty %}
+        <li>
+            Nothing to show
+        </li>
+    {% endfor %}
+</ul>
