@@ -54,3 +54,18 @@ class UserApplicationLicense(models.Model):
         unique_together = (
             ('user', 'company_license')
         )
+
+
+class Permission(models.Model):
+    application = models.ForeignKey(Application)
+
+    id = models.AutoField(primary_key=True)
+    codename = models.CharField(max_length=50)
+    name = models.CharField(max_length=256)
+
+    users = models.ManyToManyField(User)
+
+    class Meta:
+        unique_together = (
+            ('application', 'codename')
+        )
