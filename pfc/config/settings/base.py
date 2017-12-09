@@ -294,3 +294,13 @@ OAUTH2_PROVIDER_APPLICATION_MODEL = 'oauth2_provider.Application'
 APPEND_SLASH = False
 
 JET_INDEX_DASHBOARD = 'pfc.dashboard.CustomDashboard'
+
+OAUTH2_PROVIDER = {
+    'OAUTH2_VALIDATOR_CLASS': 'pfc.users.oauth_validators.OAuth2CustomValidator',
+    'SCOPES': {
+        'read': 'Scope for read operations',
+        'write': 'Scope for write operations',
+        'introspection': 'Scope for introspection'
+    },
+    'DEFAULT_SCOPES': ['__all__']
+}

@@ -87,7 +87,7 @@ class User(AbstractUser):
 
     def has_access_to_application(self, application):
         try:
-            self.user.licenses.get(
+            self.licenses.get(
                 company_license__active=1,
                 company_license__application=application,
             )
@@ -122,11 +122,19 @@ class UserRule(models.Model):
 
     users = models.ManyToManyField(User, related_name='rules')
 
-    def apply_rule(self):
-        return self.__dict__[self.operator](self.argument)
+    def apply_rule(self, request):
+        return getattr(self, self.operator)(request, self.argument)
 
-    def only_from_ip(self, ip):
+    def only_from_ip(self, request, ip):
         return True
+
+    def only_after_hour(self, request, value):
+        hour = datetime.utcnow().strftime("%H")
+        return int(hour) >= int(value)
+
+    def only_before_hour(self, request, value):
+        hour = datetime.utcnow().strftime("%H")
+        return int(hour) < int(value)
 
     def __str__(self):
         return self.name

@@ -12,3 +12,13 @@ class OAuth2CustomValidator(OAuth2Validator):
             request.user = u
             return True
         return False
+
+    def validate_bearer_token(self, token, scopes, request):
+        if super(OAuth2CustomValidator, self).validate_bearer_token(token, scopes, request):
+            access_token = request.access_token
+            if access_token.user:
+                for rule in access_token.user.rules.all():
+                    if not rule.apply_rule(request):
+                        return False
+            return True
+        return False

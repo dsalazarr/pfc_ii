@@ -6,8 +6,11 @@ from django.contrib import admin
 from django.db.models.aggregates import Count
 from django.db.models.expressions import F
 from django.db.models.query_utils import Q
+from oauth2_provider.admin import ApplicationAdmin
+from oauth2_provider.models import Application
 
-from pfc.applications.models import License, CompanyApplicationLicense, UserApplicationLicense
+from pfc.applications.models import License, CompanyApplicationLicense, UserApplicationLicense, \
+    ApplicationConfig
 
 
 @admin.register(License)
@@ -91,3 +94,18 @@ class UserApplicationInline(admin.TabularInline):
             )
 
         return formset
+
+
+admin.site.unregister(Application)
+
+
+class ApplicationConfigInline(admin.StackedInline):
+    model = ApplicationConfig
+    verbose_name = "Application configuration value"
+    verbose_name_plural = "Application configuration set"
+    extra = 1
+
+
+@admin.register(Application)
+class CustomApplicationAdmin(ApplicationAdmin):
+    inlines = [ApplicationConfigInline]
