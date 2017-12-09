@@ -1,4 +1,5 @@
 from __future__ import unicode_literals
+from datetime import datetime
 
 from ckeditor.fields import RichTextField
 from django.db import models
@@ -12,6 +13,8 @@ class Message(models.Model):
     subject = models.CharField(_('Message\'s subject'), blank=False, max_length=255)
     body = RichTextField(_("Message's body"), blank=False)
     read = models.BooleanField(default=False)
+    sent_at = models.DateTimeField(auto_now_add=True)
+    read_at = models.DateTimeField(null=True)
 
     author = models.ForeignKey(User, related_name='sent_messages')
     destination = models.ForeignKey(User, related_name='received_messages')
