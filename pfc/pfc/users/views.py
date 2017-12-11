@@ -2,6 +2,10 @@ from django.core.urlresolvers import reverse
 from django.views.generic import DetailView, ListView, RedirectView, UpdateView
 
 from django.contrib.auth.mixins import LoginRequiredMixin
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework import status
 
 from .models import User
 
@@ -43,3 +47,37 @@ class UserListView(LoginRequiredMixin, ListView):
     # These next two lines tell the view to index lookups by username
     slug_field = 'username'
     slug_url_kwarg = 'username'
+
+
+class UserListRestView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, *args, **kwargs):
+        return Response(
+            status=status.HTTP_200_OK,
+            data=[
+                {
+                    "id": item.id,
+                    "name": item.name,
+                    "email": item.email,
+                }
+                for item in request.user.company.users.all()
+            ]
+        )
+
+
+class UserPermissionsView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, *args, **kwargs):
+        application = request.auth.application
+        user = request.user
+        return Response(
+            status=status.HTTP_200_OK,
+            data=[
+                item.codename
+                for item in request.user.permissions.filter(
+                    application=application
+                )
+            ]
+        )
