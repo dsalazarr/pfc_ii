@@ -29,6 +29,7 @@ class Company(models.Model):
     id = models.AutoField(_('Company\'s database id'), primary_key=True)
     name = models.CharField(_('Name of Company'), blank=False, max_length=255)
     slug = models.CharField(_('Company slug'), blank=True, unique=True, max_length=255)
+    main_company = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
@@ -75,6 +76,11 @@ class User(AbstractUser):
         'Company',
         related_name='users',
     )
+    permissions = models.ManyToManyField(
+        'applications.Permission',
+        related_name='users',
+        blank=True,
+    )
 
     def __str__(self):
         return self.username
@@ -106,6 +112,10 @@ class User(AbstractUser):
         return self.licenses.create(
             company_license=company_license,
         )
+
+    @property
+    def is_from_main_company(self):
+        return self.is_superuser
 
 
 class UserRule(models.Model):

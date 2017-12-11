@@ -6,11 +6,16 @@ from django.contrib import admin
 from django.db.models.aggregates import Count
 from django.db.models.expressions import F
 from django.db.models.query_utils import Q
-from oauth2_provider.admin import ApplicationAdmin
-from oauth2_provider.models import Application
+from oauth2_provider.admin import ApplicationAdmin, AccessTokenAdmin
+from oauth2_provider.models import (
+    Application as ApplicationModel,
+    AccessToken as AccessTokenModel,
+    Grant,
+    RefreshToken,
+)
 
 from pfc.applications.models import License, CompanyApplicationLicense, UserApplicationLicense, \
-    ApplicationConfig
+    ApplicationConfig, Permission, Application, AccessToken
 
 
 @admin.register(License)
@@ -96,7 +101,10 @@ class UserApplicationInline(admin.TabularInline):
         return formset
 
 
-admin.site.unregister(Application)
+admin.site.unregister(ApplicationModel)
+admin.site.unregister(AccessTokenModel)
+admin.site.unregister(Grant)
+admin.site.unregister(RefreshToken)
 
 
 class ApplicationConfigInline(admin.StackedInline):
@@ -106,6 +114,17 @@ class ApplicationConfigInline(admin.StackedInline):
     extra = 1
 
 
+class ApplicationPermissionsInline(admin.StackedInline):
+    model = Permission
+    verbose_name = "Application permission"
+    verbose_name_plural = "Application permissions"
+    extra = 1
+    fields = ('codename', 'name')
+
+
 @admin.register(Application)
 class CustomApplicationAdmin(ApplicationAdmin):
-    inlines = [ApplicationConfigInline]
+    inlines = [ApplicationConfigInline, ApplicationPermissionsInline]
+
+
+admin.site.register(AccessToken, AccessTokenAdmin)

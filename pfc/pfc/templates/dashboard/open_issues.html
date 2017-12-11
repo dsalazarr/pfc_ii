@@ -1,0 +1,17 @@
+<ul>
+    {% for issue in module.children %}
+        <li>
+            <span class="float-right">
+                <span class="dim">
+                    {{ issue.author }} at {{ issue.created_at }}
+                </span>
+            </span>
+
+            <a href="{{ issue.get_admin_url }}">{{ issue.title }}</a>
+        </li>
+    {% empty %}
+        <li>
+            Nothing to show
+        </li>
+    {% endfor %}
+</ul>

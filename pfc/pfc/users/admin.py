@@ -6,6 +6,7 @@ from django.utils.translation import ugettext_lazy as _
 from slugify import slugify
 
 from pfc.applications.admin import CompanyLicenseInline, UserApplicationInline
+from pfc.applications.models import Permission
 from pfc.users.models import UserRule, CompanyRule, Company
 from .models import User
 
@@ -44,10 +45,29 @@ class MyUserAdmin(AuthUserAdmin):
     add_form = MyUserCreationForm
     fieldsets = (
             ('User Profile', {'fields': ('name',)}),
+            ('Application Permissions', {'fields': ('permissions',)}),
     ) + AuthUserAdmin.fieldsets
-    list_display = ('username', 'name', 'is_superuser')
+    list_display = ('username', 'name',)
     search_fields = ['name']
     inlines = [UserApplicationInline, UserRuleInline]
+
+    def get_queryset(self, request):
+        queryset = super(MyUserAdmin, self).get_queryset(request)
+        return queryset.filter(company=request.user.company)
+
+    def save_model(self, request, obj, form, change):
+        if not change:
+            obj.company = request.user.company
+            obj.is_staff = True
+        return super(MyUserAdmin, self).save_model(request, obj, form, change)
+
+    def formfield_for_manytomany(self, db_field, request, **kwargs):
+        if db_field.name == "permissions":
+            kwargs["queryset"] = Permission.objects.filter(
+                application__companyapplicationlicense__userapplicationlicense__user=request.user,
+                application__companyapplicationlicense__active=True,
+            )
+        return super(MyUserAdmin, self).formfield_for_manytomany(db_field, request, **kwargs)
 
 
 class UserRuleCreationForm(forms.ModelForm):

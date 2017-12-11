@@ -53,6 +53,7 @@ THIRD_PARTY_APPS = [
     'allauth.socialaccount',  # registration
     'oauth2_provider',
     'ckeditor',
+    'rest_framework',
 ]
 
 # Apps specific for this project go here.

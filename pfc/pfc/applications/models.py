@@ -2,7 +2,7 @@ from __future__ import unicode_literals
 
 from django.db import models
 from django.conf import settings
-from oauth2_provider.models import Application
+from oauth2_provider.models import Application as ApplicationModel, AccessToken as AccessTokenModel
 
 from pfc.users.models import Company, User
 
@@ -57,15 +57,26 @@ class UserApplicationLicense(models.Model):
 
 
 class Permission(models.Model):
-    application = models.ForeignKey(Application)
+    application = models.ForeignKey(ApplicationModel)
 
     id = models.AutoField(primary_key=True)
     codename = models.CharField(max_length=50)
     name = models.CharField(max_length=256)
 
-    users = models.ManyToManyField(User)
-
     class Meta:
         unique_together = (
             ('application', 'codename')
         )
+
+    def __str__(self):
+        return "{} | {}".format(self.application.name, self.name)
+
+
+class Application(ApplicationModel):
+    class Meta:
+        proxy = True
+
+
+class AccessToken(AccessTokenModel):
+    class Meta:
+        proxy = True

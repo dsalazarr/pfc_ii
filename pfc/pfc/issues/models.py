@@ -34,8 +34,14 @@ class Issue(models.Model):
     modified_at = models.DateTimeField(auto_now=True)
 
     author = models.ForeignKey(User, related_name='created_issues')
-    assigned_to = models.ForeignKey(User, null=True, related_name='assigned_issues')
+    assigned_to = models.ForeignKey(User, null=True, blank=True, related_name='assigned_issues')
     closed_by = models.ForeignKey(User, null=True, related_name='closed_issues')
+
+    application = models.ForeignKey('oauth2_provider.Application', blank=True,
+                                    null=True, related_name='issues')
+
+    def get_admin_url(self):
+        return "/admin/issues/issue/{}/change/".format(self.id)
 
 
 class IssueComment(models.Model):
