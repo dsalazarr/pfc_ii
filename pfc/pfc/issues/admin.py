@@ -33,7 +33,7 @@ class CommentInline(admin.TabularInline):
 @admin.register(Issue)
 class MyIssueForm(admin.ModelAdmin):
     change_form = IssueCreationForm
-    fields = ('title', 'ref', 'description',)
+    fields = ('title', 'ref', 'application', 'description',)
     list_display = ('title', 'status', 'author', 'assigned_to', 'created_at')
     inlines = [CommentInline]
 
