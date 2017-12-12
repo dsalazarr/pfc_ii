@@ -1,8 +1,12 @@
-
+from allauth.account.models import EmailAddress
+from allauth.socialaccount.admin import SocialTokenAdmin
+from allauth.socialaccount.models import SocialAccount, SocialToken, SocialApp
 from django import forms
 from django.contrib import admin
 
 # Register your models here.
+from django.contrib.auth.models import Group
+from django.contrib.sites.models import Site
 from django.db.models.aggregates import Count
 from django.db.models.expressions import F
 from django.db.models.query_utils import Q
@@ -105,6 +109,12 @@ admin.site.unregister(ApplicationModel)
 admin.site.unregister(AccessTokenModel)
 admin.site.unregister(Grant)
 admin.site.unregister(RefreshToken)
+admin.site.unregister(Site)
+admin.site.unregister(EmailAddress)
+admin.site.unregister(Group)
+admin.site.unregister(SocialAccount)
+admin.site.unregister(SocialApp)
+admin.site.unregister(SocialToken)
 
 
 class ApplicationConfigInline(admin.StackedInline):
