@@ -1,7 +1,11 @@
+import urllib
+
 from django.core.urlresolvers import reverse
+from django.shortcuts import redirect
 from django.views.generic import DetailView, ListView, RedirectView, UpdateView
 
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic.base import View
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -81,3 +85,23 @@ class UserPermissionsView(APIView):
                 )
             ]
         )
+
+
+class UserMe(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request, *args, **kwargs):
+        return Response(
+            status=status.HTTP_200_OK,
+            data={
+                'id': request.user.id,
+                'email': request.user.email
+            }
+        )
+
+
+class LoginView(View):
+    def get(self, request, *args, **kawrgs):
+        next = request.GET.get('next', '')
+        next_encoded = urllib.urlencode({'next': next})
+        return redirect('/admin/login/?{}'.format(next_encoded))

@@ -112,14 +112,14 @@ class UserRuleCreationForm(forms.ModelForm):
 
     class Meta:
         model = UserRule
-        fields = ('name', 'operator', 'argument')
+        fields = ('name', 'operator')
 
 
 @admin.register(UserRule)
 class MyUserRule(admin.ModelAdmin):
     form = UserRuleCreationForm
     add_form = UserRuleCreationForm
-    list_display = ('name', 'operator', 'argument')
+    list_display = ('name', 'operator')
     search_fields = ('name',)
 
 

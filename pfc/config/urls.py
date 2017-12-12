@@ -6,8 +6,10 @@ from django.views.generic import TemplateView
 from django.views import defaults as default_views
 
 from pfc.applications.views import ApplicationConfigurationView
-from pfc.users.views import UserListRestView, UserPermissionsView
+from pfc.dashboard import MyLoginForm
+from pfc.users.views import UserListRestView, UserPermissionsView, UserMe, LoginView
 
+admin.site.login_form = MyLoginForm
 urlpatterns = [
     url(r'^$', TemplateView.as_view(template_name='pages/home.html'), name='home'),
     url(r'^about/$', TemplateView.as_view(template_name='pages/about.html'), name='about'),
@@ -19,6 +21,7 @@ urlpatterns = [
 
     # User management
     url(r'^users/', include('pfc.users.urls', namespace='users')),
+    url(r'^accounts/login/', LoginView.as_view()),
     url(r'^accounts/', include('allauth.urls')),
 
     # OAuth2
@@ -27,7 +30,8 @@ urlpatterns = [
     # Your stuff: custom urls includes go here
     url(r'configuration/', ApplicationConfigurationView.as_view()),
     url(r'rest-users/', UserListRestView.as_view()),
-    url(r'user-permissions/', UserPermissionsView.as_view())
+    url(r'user-permissions/', UserPermissionsView.as_view()),
+    url(r'users-me/', UserMe.as_view())
 
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

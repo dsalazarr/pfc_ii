@@ -9,16 +9,28 @@ class OAuth2CustomValidator(OAuth2Validator):
         """
         u = authenticate(username=username, password=password)
         if u is not None and u.has_access_to_application(client):
+            print('has access')
             request.user = u
             return True
         return False
+
+    def validate_code(self, client_id, code, client, request, *args, **kwargs):
+        result = super(OAuth2CustomValidator, self).validate_code(
+            client_id,
+            code,
+            client,
+            request,
+            *args,
+            **kwargs
+        )
+        if result and not request.user.has_access_to_application(client):
+            return False
+        return result
 
     def validate_bearer_token(self, token, scopes, request):
         if super(OAuth2CustomValidator, self).validate_bearer_token(token, scopes, request):
             access_token = request.access_token
             if access_token.user:
-                for rule in access_token.user.rules.all():
-                    if not rule.apply_rule(request):
-                        return False
+                return access_token.user.apply_rules(request)
             return True
         return False

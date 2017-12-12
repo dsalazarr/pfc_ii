@@ -117,10 +117,17 @@ class User(AbstractUser):
     def is_from_main_company(self):
         return self.is_superuser
 
+    def apply_rules(self, request):
+        for user_rule in self.user_rules.all():
+            if not user_rule.apply_rule(request):
+                return False
+        return True
+
 
 class UserRule(models.Model):
     OPERATOR_CHOICES = [
         ('only_from_ip', 'Only from ip'),
+        ('only_from_useragent', 'Only from useragent'),
         ('only_after_hour', 'Only after hour'),
         ('only_before_hour', 'Only before hour'),
     ]
@@ -128,15 +135,31 @@ class UserRule(models.Model):
     id = models.AutoField(primary_key=True)
     name = models.CharField(max_length=255, blank=False)
     operator = models.CharField(max_length=255, blank=False)
-    argument = models.CharField(max_length=255, blank=True)
 
-    users = models.ManyToManyField(User, related_name='rules')
+    users = models.ManyToManyField(
+        User,
+        through='UserRuleUser',
+        related_name='rules'
+    )
 
-    def apply_rule(self, request):
-        return getattr(self, self.operator)(request, self.argument)
+    def apply_rule(self, request, argument):
+        return getattr(self, self.operator)(request, argument)
 
     def only_from_ip(self, request, ip):
-        return True
+        headers = getattr(request, 'META', None) or getattr(request, 'headers', {})
+        x_forwarded_for = headers.get('HTTP_X_FORWARDED_FOR')
+        if x_forwarded_for:
+            request_ip = x_forwarded_for.split(',')[0]
+        else:
+            return True
+        return ip == request_ip
+
+    def only_from_useragent(self, request, value):
+        headers = getattr(request, 'META', None) or getattr(request, 'headers', {})
+        user_agent = headers.get('HTTP_USER_AGENT')
+        if user_agent:
+            return user_agent.startswith(value) or user_agent == 'configuration'
+        return False
 
     def only_after_hour(self, request, value):
         hour = datetime.utcnow().strftime("%H")
@@ -148,6 +171,15 @@ class UserRule(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class UserRuleUser(models.Model):
+    user = models.ForeignKey(User, related_name='user_rules')
+    rule = models.ForeignKey(UserRule)
+    argument = models.CharField(max_length=255, blank=True)
+
+    def apply_rule(self, request):
+        return self.rule.apply_rule(request, self.argument)
 
 
 class CompanyRule(models.Model):
